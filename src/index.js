@@ -15,15 +15,19 @@ const resetResult = () => {
 
 const findCountry = () => {
   const searchInput = input.value.trim();
-  fetchCountries(searchInput)
-    .then(data => {
-      countriesFoundedList(data);
-    })
-    .catch(error => {
-      if (searchInput !== '') {
-        Notiflix.Notify.failure('Oops, there is no country with that name');
-      }
-    });
+  if (/[0-9]/.test(searchInput)) {
+    Notiflix.Notify.failure("We don't accept numbers");
+  } else {
+    fetchCountries(searchInput)
+      .then(data => {
+        countriesFoundedList(data);
+      })
+      .catch(error => {
+        if (searchInput !== '') {
+          Notiflix.Notify.failure('Oops, there is no country with that name');
+        }
+      });
+  }
 };
 
 const countriesFoundedList = data => {
@@ -38,7 +42,7 @@ const countriesFoundedList = data => {
     return (countryList.innerHTML = data
       .map(
         country =>
-          `<li><h4><img src =" ${country.flags.svg}" alt="${country.name.official} flag" width="50px"/>${country.name.official}</h4></li>`
+          `<li><h4><img src =" ${country.flags.svg}" alt="${country.name.common} flag" width="50px"/>${country.name.common}</h4></li>`
       )
       .join(''));
   } else {
@@ -48,11 +52,13 @@ const countriesFoundedList = data => {
         country =>
           `<ul class="country-info-list">
         <li><p class="country-name"><b><img src =" ${country.flags.svg}" alt="${
-            country.name.official
-          } flag" width="100px"/>${country.name.official}</b></p></li>
+            country.name.common
+          } flag" width="100px"/>${country.name.common}</b></p></li>
         <li><p><b>Capital:</b> ${country.capital}</p></li>
         <li><p><b>Population:</b> ${country.population}</p></li>
-        <li><p><b>Languages:</b> ${values(country.languages)}</p></li>
+        <li><p><b>Languages:</b> ${values(country.languages).join(
+          ', '
+        )}</p></li>
         </ul>`
       )
       .join(''));
